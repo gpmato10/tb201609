@@ -7,9 +7,16 @@ import java.sql.*;
 /**
  * Created by dw on 2016. 9. 2..
  */
-public abstract class UserDao {
+public class UserDao {
+
+    private SimpleConnectionMaker simpleConnectionMaker;
+
+    public UserDao() {
+        simpleConnectionMaker = new SimpleConnectionMaker();
+    }
+
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection c = getConnection();
+        Connection c = simpleConnectionMaker.makeNewConnection();
 
         PreparedStatement preparedStatement = c.prepareStatement(
                 "insert into users(id, name, password) values(?,?,?)");
@@ -24,7 +31,7 @@ public abstract class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection c = getConnection();
+        Connection c = simpleConnectionMaker.makeNewConnection();
 
         PreparedStatement preparedStatement = c.prepareStatement(
                 "select * from users where id = ?");
@@ -45,25 +52,23 @@ public abstract class UserDao {
         return user;
     }
 
-
-    public abstract Connection getConnection() throws SQLException, ClassNotFoundException;
-
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-//        UserDao dao = new UserDao();
-//
-//        User user = new User();
-//        user.setId("whiteship");
-//        user.setName("백기선");
-//        user.setPassword("married");
-//
-//        dao.add(user);
-//
-//        System.out.println(user.getId() + "이란 아이디 등록 성공");
-//
-//        User user2 = dao.get(user.getId());
-//        System.out.println(user2.getName());
-//        System.out.println(user2.getPassword());
-//
-//        System.out.println(user2.getId() + "라는 아이디를 조회 성공함.");
+        UserDao dao = new UserDao();
+
+        User user = new User();
+        user.setId("whiteship");
+        user.setName("백기선");
+        user.setPassword("married");
+
+        dao.add(user);
+
+        System.out.println(user.getId() + "이란 아이디 등록 성공");
+
+        User user2 = dao.get(user.getId());
+        System.out.println(user2.getName());
+        System.out.println(user2.getPassword());
+
+        System.out.println(user2.getId() + "라는 아이디를 조회 성공함.");
+
     }
 }
